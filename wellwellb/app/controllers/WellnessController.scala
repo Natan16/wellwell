@@ -41,8 +41,11 @@ class WellnessController @Inject()(config: Configuration, ws: WSClient, val cont
   }
 
   private def vagalume_response_formatter(response: WSResponse): Html = {
-    val links = for (doc <- response.json("response")("docs").as[List[JsValue]])
-      yield ("<a href=\"url\"> www.vagalume.com" + doc("url").as[String] + " </a>")
+    val links = for (
+      doc <- response.json("response")("docs").as[List[JsValue]];
+      url = "https://www.vagalume.com" + doc("url").as[String]
+    )
+      yield (s"<a href=${url}>" + url + " </a>")
     Html(links.mkString(" <br/>"))
   }
 }
