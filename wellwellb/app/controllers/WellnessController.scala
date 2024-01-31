@@ -4,7 +4,9 @@ import javax.inject._
 import play.api._
 import play.api.mvc._
 import play.api.libs.ws._
-import scala.concurrent.Future  
+import play.api.libs.json._
+import scala.concurrent.Future
+import play.twirl.api.Html
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -34,7 +36,13 @@ class WellnessController @Inject()(config: Configuration, ws: WSClient, val cont
     ).withHeaders("Authorization" -> ("Bearer " + API_KEY))
     val futureResponse : Future[WSResponse] = request.get() 
     futureResponse.map(response => Ok(
-      views.html.search(response.json("response")("docs").toString))
+      views.html.search(vagalume_response_formatter(response)))
     )
+  }
+
+  private def vagalume_response_formatter(response: WSResponse): Html = {
+    val links = for (doc <- response.json("response")("docs").as[List[JsValue]])
+      yield ("<a href=\"url\"> www.vagalume.com" + doc("url").as[String] + " </a>")
+    Html(links.mkString(" <br/>"))
   }
 }
