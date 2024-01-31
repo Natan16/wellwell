@@ -10,8 +10,7 @@ scalaVersion := "2.13.12"
 libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.0" % Test
 libraryDependencies += ws
-libraryDependencies += json
-
+libraryDependencies += "org.playframework" %% "play-json" % "3.0.2"
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.saragatasoftware.controllers._"
 
