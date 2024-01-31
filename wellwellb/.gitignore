@@ -7,4 +7,5 @@ target
 /.project
 /.settings
 /.env
+.metals/
 /RUNNING_PID
