@@ -1,5 +1,7 @@
-@(response: Html) 
+@(songs: List[Song]) 
 
 @main("Welcome to Play") {
-  <h1>@response</h1>
+  @for(song <- songs) {
+    <li><h1><a href="@{song.url}">@song.name</a></h1></li>
+  }
 }
