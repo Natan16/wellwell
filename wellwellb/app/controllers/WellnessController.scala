@@ -28,24 +28,29 @@ class WellnessController @Inject()(config: Configuration, ws: WSClient, val cont
 
   def search(term: String) = Action.async { 
     implicit request: Request[AnyContent] =>
-    val API_KEY = config.get[String]("VAGALUME_API_KEY")
-    val BASE_URL = "https://api.vagalume.com.br/"
-    val url = s"${BASE_URL}search.excerpt"
-    val request : WSRequest = ws.url(url).withQueryString(
-      "q" -> term, "limit" -> "100"
-    ).withHeaders("Authorization" -> ("Bearer " + API_KEY))
-    val futureResponse : Future[WSResponse] = request.get() 
-    futureResponse.map(response => Ok(
-      views.html.search(vagalume_response_formatter(response)))
-    )
+    val songs = MusicAPIAdapter(ws, "vagalume").listSongs(term)
+    // this anchor part should be built in the template, right?
+    // because now we uncoulple frontend and backend
+    Ok(views.html.search(songs))
+    // val API_KEY = config.get[String]("VAGALUME_API_KEY")
+    // val BASE_URL = "https://api.vagalume.com.br/"
+    // val url = s"${BASE_URL}search.excerpt"
+    // val request : WSRequest = ws.url(url).withQueryString(
+    //   "q" -> term, "limit" -> "100"
+    // ).withHeaders("Authorization" -> ("Bearer " + API_KEY))
+    // val futureResponse : Future[WSResponse] = request.get() 
+    // futureResponse.map(response => Ok(
+    //   views.html.search(vagalume_response_formatter(response)))
+    // )
   }
-
-  private def vagalume_response_formatter(response: WSResponse): Html = {
-    val links = for (
-      doc <- response.json("response")("docs").as[List[JsValue]];
-      url = "https://www.vagalume.com" + doc("url").as[String]
-    )
-      yield (s"<a href=${url}>" + url + " </a>")
-    Html(links.mkString(" <br/>"))
-  }
+  // this can be isolated on my adapter class. seems like a good idea ... lets make
+  // a draft
+  // private def vagalume_response_formatter(response: WSResponse): Html = {
+  //   val links = for (
+  //     doc <- response.json("response")("docs").as[List[JsValue]];
+  //     url = "https://www.vagalume.com" + doc("url").as[String]
+  //   )
+  //     yield (s"<a href=${url}>" + url + " </a>")
+  //   Html(links.mkString(" <br/>"))
+  // }
 }
