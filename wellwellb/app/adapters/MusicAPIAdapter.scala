@@ -8,7 +8,8 @@ import models.{Song}
 import providers.{Vagalume}
 
 class MusicAPIAdapter(val config: Configuration, val ws: WSClient, val providerName: String) {
-    val provider = MusicAPIAdapter.providerMap(providerName)(config, ws)
+    val provider = MusicAPIAdapter.providerMap(providerName)(config, ws) // returns an
+    // instance of the correct provider
 
     def listSongs(query: String): List[Song] = provider.listSongs(query)
 }
